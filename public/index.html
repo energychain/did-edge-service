@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>ID-Ideal - Showcase</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="./jsoneditor.css" rel="stylesheet" type="text/css">
+    <script src="./jsoneditor.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="https://stromdao.de/" target="_blank" title="STROMDAO GmbH" class="float-end">
+          <img src="./stromdao.png"  class="float-end">
+        </a>
+      </div>
+    </nav>
+    <div class="container" style="margin-top:25px;">
+        <h1>ID-Ideal Showcase</h1>
+        <div class="card-group">
+          <div class="card">
+            <table class="table table-condensed">
+              <tr><td>Browser Identity</td><td id="browserId"></td></tr>
+              <tr><td>Cloud Identity</td><td id="cloudId"></td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="card-group" style="margin.top:25px;">
+          <div class="card" style="min-height:400px">
+            <div class="card-header"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-upload" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"/>
+  <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3z"/>
+</svg>&nbsp;send</div>
+            <div class="card-body" id="editorOut"></div>
+          </div>
+          <div class="card" style="min-height:400px">
+            <div class="card-header"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-download" viewBox="0 0 16 16">
+  <path d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"/>
+  <path d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"/>
+</svg>&nbsp;receive</div>
+            <div class="card-body" id="editorIn"></div>
+          </div>
+        </div>
+        <div class="card-group" style="margin-top:25px">
+          <div class="card">
+            <div class="card-header">CONTRL</div>
+            <div class="card-body">
+                <div class="btn-group" role="group" aria-label="CONTRL Messages">
+                   <button type="button" class="btn btn-primary" id="btnPing">PING</button>
+                   <button type="button" class="btn btn-primary" id="btnSchemas">SCHEMAS</button>
+                   <button type="button" class="btn btn-primary" id="btnPresentations">PRESENTATIONS</button>
+                   <button type="button" class="btn btn-primary" id="btnPDs">PDs</button>
+                   <button type="button" class="btn btn-secondary" id="btnSchemasTo">SCHEMAS</button>
+                   <button type="button" class="btn btn-secondary" id="btnAddSchema">+SCHEMA</button>
+                   <button type="button" class="btn btn-secondary" id="btnAddWebhook">+WEBHOOK</button>
+                   <button type="button" class="btn btn-secondary" id="btnAddPresentation">+PRESENTATION</button>
+                   <button type="button" class="btn btn-secondary" id="btnAddPD">+PD</button>
+                   <button type="button" class="btn btn-secondary" id="btnGetVP">+VP</button>
+                   <button type="button" class="btn btn-default" id="btnBuffer">Buffer</button>
+                </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="card-group" style="margin-top:25px">
+          <div class="card" style="min-height:400px;" id="skeletonCard">
+            <div class="card-header"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+        </svg>&nbsp;<span id="skeletonTitle">Edit</span></div>
+            <div class="card-body" id="editorFiller"></div>
+            <div class="form-group extEdit">
+              <label for="presentTo">Present To</label><input type="text" id="presentTo" class="form-control"/>
+            </div>
+            <div class="form-group extEdit">
+              <label for="presentSchema">Schema Hash</label><input type="text" id="presentSchema" class="form-control"/>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary float-end" id="btnApplySend">Apply and Send &raquo;</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-group" style="margin-top:25px">
+          <div class="card">
+            <div class="card-header">Load JSON (URL) to Editor</div>
+            <div class="card-body">
+              <div class="input-group form-group">
+                 <input type="url" id="jsonUrl" class="form-control" value="https://corrently.io/schemas/test.schema.nameageemail.json"/>
+                 <button type="button" class="btn btn-default" id="btnJsonUrl">Load</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="./webclient/client.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
