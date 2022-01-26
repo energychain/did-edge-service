@@ -31437,6 +31437,14 @@ class Identity {
       return identity;
     }
 
+    this.getBalance = async function(address) {
+      if((typeof address == 'undefined') || (address == null)) {
+        address = parent.config.identity.address;
+      }
+      const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      return await ethers.utils.formatUnits(await provider.getBalance(address),'finney');
+    }
+
     this.delegate = async function(id,to,duration) {
         if((typeof duration == 'undefined')||(duration==null)) duration = 3600;
         const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
@@ -31475,13 +31483,22 @@ const EthrDID = require("ethr-did").EthrDID;
 class JWTBuilder {
   constructor(config) {
     if((typeof config == 'undefined') || (config == null)) { config = {}; }
+    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://integration.corrently.io/";
+    if(typeof config.name == 'undefined') config.name = "mainnet";
+    if(typeof config.chainId == 'undefined') config.chainId = "6226";
+    if(typeof config.identifier == 'undefined') config.identifier = "0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4";
+    if(typeof config.registry == 'undefined') config.registry ="0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335";
+
     this.config = config;
 
-    this.toJWT = async function(object) {
+    this.toJWT = async function(object,identity) {
       if((typeof object !== 'object')||(object == null)) {
         throw new Error('toJWT expects object');
       }
-      const ethrDid = new EthrDID({identifier:config.identity.publicKey,chainNameOrId:config.chainId,registry:config.registry,rpcUrl:config.rpcUrl,privateKey:config.identity.privateKey});
+      if((typeof identity == 'undefined')||(identity == null)) {
+        identity = config.identity.address;
+      }
+      const ethrDid = new EthrDID({identifier:identity,chainNameOrId:config.chainId,registry:config.registry,rpcUrl:config.rpcUrl,privateKey:config.identity.privateKey});
       return await ethrDid.signJWT(object);
     }
   }
@@ -31509,7 +31526,7 @@ class JWTResolver {
     }
     this.toDid = async function(jwt) {
       if((typeof jwt !== 'string') || (jwt.substr(0,2) !== 'ey')) {
-          throw new Error('JWT expected');
+          throw new Error('JWT expected received: '+jwt);
       }
       const didResolver = new Resolver(getResolver(config));
       const ethrDid = new EthrDID(config);

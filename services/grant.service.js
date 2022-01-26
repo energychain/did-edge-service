@@ -3,7 +3,7 @@
 const memstorage = {};
 
 module.exports = {
-	name: "self",
+	name: "grant",
 	/**
 	 * Settings
 	 */
@@ -28,10 +28,10 @@ module.exports = {
 		/**
 		 * @returns identity
 		 */
-		add: {
+		update: {
 			rest: {
 				method: "POST",
-				path: "/add"
+				path: "/update"
 			},
       visibility:'published',
 			params: {
@@ -45,7 +45,13 @@ module.exports = {
 					let did = { issuer: 'internal:0x0',payload:{} }
 					try {
 						did = await resolver.toDid(ctx.params.did);
+						let issuer = did.signer.blockchainAccountId.substr(0,42);
+						if(typeof memstorage[did.payload.address]  == 'undefined') memstorage[did.payload.address] = {};
+						if(typeof memstorage[did.payload.address][issuer]  == 'undefined') memstorage[did.payload.address][issuer] = {};
+						memstorage[did.payload.address][issuer] = did.payload.permissions;
+						response =  memstorage[did.payload.address][issuer];
 					} catch(e) {
+						console.log(e);
 						response.type = 'APERAK';
 						response.error = e.message;
 					}
@@ -54,40 +60,41 @@ module.exports = {
 					}
 					return response;
 			}
-    }
+    },
+		retrieve: {
+			rest: {
+				method: "GET",
+				path: "/retrieve"
+			},
+			visibility:'published',
+			params: {
+					 address:"string"
+			},
+			async handler(ctx) {
+				if(typeof memstorage[ctx.params.address]  == 'undefined') memstorage[ctx.params.address] = {};
+				return memstorage[ctx.params.address];
+			}
+		}
 	},
 
-	/**
-	 * Events
-	 */
+
 	events: {
 
 	},
 
-	/**
-	 * Methods
-	 */
 	methods: {
 
 	},
 
-	/**
-	 * Service created lifecycle event handler
-	 */
+
 	created() {
 
 	},
 
-	/**
-	 * Service started lifecycle event handler
-	 */
 	async started() {
 
 	},
 
-	/**
-	 * Service stopped lifecycle event handler
-	 */
 	async stopped() {
 
 	}
