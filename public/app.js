@@ -34,16 +34,19 @@ const updateBalance = function() {
   const identity = new WebClient.Identity();
   // CORS might avoid this - so we ignore and wait until we get it from the server
   try {
+    let txblock = false;
     identity.getBalance(window.identity.address).then(function(balance) {
       $('#txBalance').html(balance);
       $('#etherId').attr('title','Gas: '+balance);
       if(balance < 10) {
+        txblock=true;
         $('#etherId').addClass("bg-danger");
         $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.identity.address,function(data) {
-          console.log(data);
-          setTimeout(function() {
-            location.reload();
-          },15000);
+          if(typeof data.nonce !== 'undefined') {
+            setTimeout(function() {
+              location.reload();
+            },15000);
+          }
         });
       } else {
         $('#etherId').removeClass("bg-danger");
@@ -54,12 +57,17 @@ const updateBalance = function() {
       $('#childEtherId').attr('title','Gas: '+balance);
       if(balance < 10) {
         $('#childEtherId').addClass("bg-danger");
-        $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.childIdentity.address,function(data) {
-          console.log(data);
-          setTimeout(function() {
-            location.reload();
-          },15000);
-        });
+        setTimeout(function() {
+        if(!txblock) {
+            $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.childIdentity.address,function(data) {
+              if(typeof data.nonce !== 'undefined') {
+                setTimeout(function() {
+                  location.reload();
+                },15000);
+              }
+            });
+        }
+      },2000);
       } else {
         $('#childEtherId').removeClass("bg-danger");
       }
