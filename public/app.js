@@ -17,8 +17,17 @@ const profileEditorSet = function(data) {
        write:false
      }
   }
-
   window.editorChild.set(childData);
+}
+
+const updateTransport = async function() {
+    let data = {
+        credential:window.childIdentity.address,
+        maintainer:location.protocol + '//' + location.hostname + ':' + location.port + '/'
+    }
+    window.editorTransport.set(data);
+    let builder = new WebClient.JWTBuilder({identity:window.identity});
+    $('#jwtTransport').html(await builder.toJWT(data));
 }
 
 const updateBalance = function() {
@@ -145,11 +154,13 @@ $(document).ready(async function() {
   const editorProfile = document.getElementById("editorProfile")
   const editorChild = document.getElementById("editorChild");
   const editorVP = document.getElementById("editorVP");
+  const editorTransport = document.getElementById("editorTransport");
 
   const options = {}
   window.editorProfile = new JSONEditor(editorProfile, options);
   window.editorChild = new JSONEditor(editorChild, options);
   window.editorVP = new JSONEditor(editorVP, options);
+  window.editorTransport = new JSONEditor(editorTransport, options);
 
   window.identity = window.localStorage.getItem("identity");
   if((typeof window.identity == 'undefined') || (window.identity == null)) {
@@ -177,6 +188,7 @@ $(document).ready(async function() {
       assignNewChildId();
     }
   }
+  updateTransport();
   $('#childBrowserId').html(window.childIdentity.identifier);
   $('#childEtherId').html(window.childIdentity.address);
 
