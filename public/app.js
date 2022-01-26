@@ -39,7 +39,8 @@ const updateBalance = function() {
       $('#etherId').attr('title','Gas: '+balance);
       if(balance < 10) {
         $('#etherId').addClass("bg-danger");
-        $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.identity.address,function() {
+        $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.identity.address,function(data) {
+          console.log(data);
           setTimeout(function() {
             location.reload();
           },15000);
@@ -53,7 +54,8 @@ const updateBalance = function() {
       $('#childEtherId').attr('title','Gas: '+balance);
       if(balance < 10) {
         $('#childEtherId').addClass("bg-danger");
-        $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.childIdentity.address,function() {
+        $.getJSON("https://api.corrently.io/v2.0/idideal/devmode?account="+window.childIdentity.address,function(data) {
+          console.log(data);
           setTimeout(function() {
             location.reload();
           },15000);
