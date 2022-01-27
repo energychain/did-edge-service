@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>ID-Ideal - AP8</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="./jsoneditor.css" rel="stylesheet" type="text/css">
+    <script src="./jsoneditor.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container">
+        <a class="navbar-brand" href="https://stromdao.de/" target="_blank" title="STROMDAO GmbH" class="float-end">
+          <img src="./stromdao.png"  class="float-end">
+        </a>
+      </div>
+    </nav>
+    <div class="container" style="margin-top:25px;margin-bottom:25px;">
+      <h1>ID-Ideal Showcase - AP8</h1>
+      <h2>Context</h2>
+      <p>
+        In the Showcase application, it is envisaged that electric car owners will be provided with CO2-relevant information and information about the charging process itself.
+will be provided. The information is provided in the form of a digital certificate that is transferred to the digital identity of the electric car owner after the charging process is completed.
+electric car owner's digital identity after the charging process has been completed.
+      </p>
+      <p>
+The proof includes information about the electricity origin, emitted and saved CO2,
+the amount of energy as well as the start and end time of the charging process and other general
+information that complies with the DIDComm specification.
+      </p>
+      <h2>This Use-Case</h2>
+      <p>
+This use case shows the process of releasing data for a defined period of time. Specifically, this involves the retrieval of meter readings by the energy service provider. The access right itself can only be granted by the owner of the grid connection, a natural person (here Alice).
+      </p>
+      <h3>Workflow</h3>
+      <ol>
+          <li>Create a Decental Identity</li>
+          <li>Derive a Child ID</li>
+          <li>Define access schema</li>
+          <li>Grant Access (delegate) to Child ID to Energy Service Provider</li>
+      </ol>
+      <h3>Walk-Through</h3>
+
+      <div class="card-group" style="margin-top:25px;">
+        <div class="card">
+          <div class="card-header">
+            <h4>Step 1 - Create a Decental Identity</h4>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <tr><td>Ethereum ID of Alice</td><td><span id="etherId"></span></td></tr>
+            </table>
+            <p>
+              The privateKey is hold by Alice. However her publicKey and Ethr-Representation needs to be shared with all parties. In this case the Energy Service Provider.
+            </p>
+            <p>
+            Next, we will set our initial data. In this case, Alice writes it, but this is to simplify our case, as might be seen in Step 3. Our data will be as simple as <code>{reading: 1234, email: 'alice@domain.org'}</code>.
+            </p>
+            <button class="btn btn-primary" id="btnWriteTest">Write TestData</button>
+            <p>
+            Check the content at the <a href="./index.html">startpage</a> (might need a reload). If you like you could add additional fields using the editor there and click on update.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-group" style="margin.top:25px;">
+        <div class="card" style="margin-top:25px">
+          <div class="card-header">
+            <h4>Step 2 - Derive a Child ID</h4>
+          </div>
+          <div class="card-body">
+            <table class="table">
+              <tr><td>Ethereum ID of Child</td><td><span id="childEtherId"></span></td></tr>
+            </table>
+            <p>
+Generation of a keypair is a simple task. After creating a keypair for the child we need to associate this key pair with Alice as she knows the private key and is seen as the owner of this Child ID.
+            </p>
+            <button class="btn btn-primary" id="btnDelegateToPrimary">Link Alice ID with Child ID</button>
+            <p>
+            Pressing the button will run a delegate transaction on the registry contract of a DLT. This will make it possible for Alice to act "on behalf of" by signing data. You might have a look into the browser console to see the transaction result.
+            </p>
+            <p>
+            As the Child ID is what <i>holds</i> access to data owned by Alice, a JWT with all required information is an easy presentation that could be provided to any third party (like the Energy Service Provider). However the data could only be acccessed if access to the data got granted using the <i>Delegate Child ID</i> with the ID (of the Energy Service Provider).
+            </p>
+            <p>
+            In other words a Child ID defines who has access to data and this is hold in a smart-contract on a DLT. Alice might have several Child IDs.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-group" style="margin.top:25px;">
+        <div class="card" style="margin-top:25px">
+          <div class="card-header">
+            <h4>Step 3 - Define access schema</h4>
+          </div>
+          <div class="card-body">
+            <p>
+              By default, the Child ID does not provide access to any of the datasets. A schema defines which fields are "read" or "write".
+            </p>
+            <p>
+              In this case, the Energy-Service-Provider should have read access to the reading field and no access to the email field.
+            </p>
+            <code>
+              '{"reading":{"read":true,"write":false},"email":{"read":false,"write":false}}'
+            </code>
+            <button class="btn btn-primary" id="btnSetPermission">Set Permission Schema</button>
+            <p>
+              Check the console to see what got set.
+            </p>
+            <p>
+              The access schema defines on a field level what could be read/updated by someone who has a delegation of the VC (Child ID).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-group" style="margin.top:25px;">
+        <div class="card" style="margin-top:25px">
+          <div class="card-header">
+            <h4>Step 4 - Grant Access (delegate) to Child ID to Energy Service Provider</h4>
+          </div>
+          <div class="card-body">
+            <p>
+              Final step is granting access to the Child ID - having a nice credential schema - to the ESP.
+            </p>
+            <p>
+              A good practice is to test the data visible data first. This can be done by Alice using the VP Retrieve function on the <a href="./index.html">startpage</a> and as Ethereum ID the Child ID.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- /container -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="./webclient/client.js"></script>
+    <script src="./ap8.js"></script>
+  </body>
+</html>
