@@ -1,6 +1,7 @@
 "use strict";
 
-const memstorage = {};
+const level = require('level')
+let db = {};
 
 module.exports = {
 	name: "profile",
@@ -47,12 +48,20 @@ module.exports = {
 						did = await resolver.toDid(ctx.params.did);
 						let issuer = did.signer.blockchainAccountId.substr(0,42);
 						let owner = did.issuer.substr(14,42);
-						if(typeof memstorage[owner]  == 'undefined') memstorage[owner] = {};
+						let storage =  {}
+						try {
+							storage = JSON.parse(await db.get(owner));
+						} catch(e) {}
+						let updated = false;
 						if(owner == issuer) {
 							for (const [key, value] of Object.entries(did.payload)) {
-							  memstorage[owner][key] = value;
+							  storage[key] = value;
+								updated = true;
 							}
-							response =  memstorage[owner];
+							response =  storage;
+							if(updated) {
+								await db.put(owner,JSON.stringify(storage));
+							}
 						} else {
 							const permissions = await ctx.call("grant.retrieve",{address:owner,owner:owner});
 							let tennentObject = {};
@@ -60,16 +69,25 @@ module.exports = {
 							for (const [key, value] of Object.entries(permissions)) {
 								parentAccount = key;
 							}
+							let parentStorage = {};
+							try {
+								parentStorage = JSON,parse(await db.get(parentAccount));
+							} catch(e) {}
+							let updated=false;
 							for (const [key, value] of Object.entries(permissions[parentAccount])) {
-								if(typeof  memstorage[parentAccount] !== 'undefined') {
+								if(typeof  parentStorage !== 'undefined') {
 										if(value.read) {
-											tennentObject[key] = memstorage[parentAccount][key];
+											tennentObject[key] = parentStorage[key];
 										}
 										if(value.write) {
-												memstorage[parentAccount][key] = did.payload[key];
+												parentStorage[key] = did.payload[key];
 												tennentObject[key] = did.payload[key];
+												updated = true;
 										}
 								}
+							}
+							if(updated) {
+								await db.put(parentAccount,JSON.stringify(parentStorage));
 							}
 							response = tennentObject;
 						}
@@ -101,6 +119,7 @@ module.exports = {
 	},
 
 	async started() {
+		db = level('profiles')
 
 	},
 

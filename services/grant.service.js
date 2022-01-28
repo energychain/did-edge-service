@@ -1,6 +1,7 @@
 "use strict";
 
-const memstorage = {};
+const level = require('level')
+let db = {};
 
 module.exports = {
 	name: "grant",
@@ -10,7 +11,6 @@ module.exports = {
 	settings: {
  		resolver:{
  			rpcUrl:"https://integration.corrently.io/",
- //			name: "mainnet",
  			chainId: "6226",
  			registry:"0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335",
  			identifier:'0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4'
@@ -46,10 +46,15 @@ module.exports = {
 					try {
 						did = await resolver.toDid(ctx.params.did);
 						let issuer = did.signer.blockchainAccountId.substr(0,42);
-						if(typeof memstorage[did.payload.address]  == 'undefined') memstorage[did.payload.address] = {};
-						if(typeof memstorage[did.payload.address][issuer]  == 'undefined') memstorage[did.payload.address][issuer] = {};
-						memstorage[did.payload.address][issuer] = did.payload.permissions;
-						response =  memstorage[did.payload.address][issuer];
+						let grants = {};
+						try {
+							grants = JSON.parse(await db.get(did.payload.address));
+						} catch(e) {}
+						if(typeof grants  == 'undefined') grants = {};
+						if(typeof grants[issuer]  == 'undefined') grants[issuer] = {};
+						grants[issuer] = did.payload.permissions;
+						response =  grants[issuer];
+						await db.put(did.payload.address,JSON.stringify(grants));
 					} catch(e) {
 						console.log(e);
 						response.type = 'APERAK';
@@ -71,8 +76,7 @@ module.exports = {
 					 address:"string"
 			},
 			async handler(ctx) {
-				if(typeof memstorage[ctx.params.address]  == 'undefined') memstorage[ctx.params.address] = {};
-				return memstorage[ctx.params.address];
+				return await db.get(ctx.params.address);
 			}
 		}
 	},
@@ -92,7 +96,7 @@ module.exports = {
 	},
 
 	async started() {
-
+		db = level('grants')
 	},
 
 	async stopped() {
