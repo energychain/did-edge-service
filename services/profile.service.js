@@ -13,7 +13,7 @@ module.exports = {
  			rpcUrl:"https://integration.corrently.io/",
  //			name: "mainnet",
  			chainId: "6226",
- 			registry:"0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335",
+ 			registry:"0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB",
  			identifier:'0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4'
  		}
  	},
