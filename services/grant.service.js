@@ -76,7 +76,7 @@ module.exports = {
 					 address:"string"
 			},
 			async handler(ctx) {
-				return await db.get(ctx.params.address);
+				return await JSON.parse(db.get(ctx.params.address));
 			}
 		}
 	},
