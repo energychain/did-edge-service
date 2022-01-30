@@ -5,7 +5,7 @@
   "main": "moleculer.config.js",
   "scripts": {
     "dev": "moleculer-runner --hot services/**/*.service.js",
-    "start": "moleculer-runner",
+    "start": "moleculer-runner --hot services/**/*.service.js",
     "cli": "moleculer connect TCP",
     "ci": "jest --watch",
     "test": "jest --coverage",

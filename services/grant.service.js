@@ -10,7 +10,7 @@ module.exports = {
 	 */
 	settings: {
  		resolver:{
- 			rpcUrl:"https://integration.corrently.io/",
+ 			rpcUrl:"https://rpc.tydids.com/",
  			chainId: "6226",
  			registry:"0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB",
  			identifier:'0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4'
@@ -76,7 +76,7 @@ module.exports = {
 					 address:"string"
 			},
 			async handler(ctx) {
-				return await JSON.parse(db.get(ctx.params.address));
+				return await JSON.parse(await db.get(ctx.params.address));
 			}
 		}
 	},

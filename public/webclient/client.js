@@ -31414,7 +31414,7 @@ class Identity {
     if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://integration.corrently.io/";
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
-    if(typeof config.registry == 'undefined') config.registry ="0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335";
+    if(typeof config.registry == 'undefined') config.registry ="0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB";
 
     config.abi = require("../EthereumDIDRegistry.abi.json");
 
@@ -31487,7 +31487,7 @@ class JWTBuilder {
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
     if(typeof config.identifier == 'undefined') config.identifier = "0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4";
-    if(typeof config.registry == 'undefined') config.registry ="0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335";
+    if(typeof config.registry == 'undefined') config.registry ="0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB";
 
     this.config = config;
 
@@ -31498,6 +31498,7 @@ class JWTBuilder {
       if((typeof identity == 'undefined')||(identity == null)) {
         identity = config.identity.address;
       }
+      console.log('Working ID',identity);
       const ethrDid = new EthrDID({identifier:identity,chainNameOrId:config.chainId,registry:config.registry,rpcUrl:config.rpcUrl,privateKey:config.identity.privateKey});
       return await ethrDid.signJWT(object);
     }
@@ -31518,7 +31519,7 @@ class JWTResolver {
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
     if(typeof config.identifier == 'undefined') config.identifier = "0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4";
-    if(typeof config.registry == 'undefined') config.registry ="0xda77BEeb5002e10be2F5B63E81Ce8cA8286D4335";
+    if(typeof config.registry == 'undefined') config.registry ="0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB";
     if(typeof config.identity == 'undefined') {
       const Identity = require("./Identity.js");
       const identity = new Identity(config);

@@ -10,8 +10,7 @@ module.exports = {
 	 */
 	settings: {
  		resolver:{
- 			rpcUrl:"https://integration.corrently.io/",
- //			name: "mainnet",
+ 			rpcUrl:"https://rpc.tydids.com/",
  			chainId: "6226",
  			registry:"0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB",
  			identifier:'0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4'
@@ -53,6 +52,7 @@ module.exports = {
 							storage = JSON.parse(await db.get(owner));
 						} catch(e) {}
 						let updated = false;
+
 						if(owner == issuer) {
 							for (const [key, value] of Object.entries(did.payload)) {
 							  storage[key] = value;
@@ -63,16 +63,19 @@ module.exports = {
 								await db.put(owner,JSON.stringify(storage));
 							}
 						} else {
-							const permissions = await ctx.call("grant.retrieve",{address:owner,owner:owner});
+							const permissions = await ctx.call("grant.retrieve",{address:owner,owner:issuer});
 							let tennentObject = {};
 							let parentAccount = '';
 							for (const [key, value] of Object.entries(permissions)) {
 								parentAccount = key;
 							}
+
 							let parentStorage = {};
 							try {
-								parentStorage = JSON,parse(await db.get(parentAccount));
-							} catch(e) {}
+								parentStorage = JSON.parse(await db.get(parentAccount));
+							} catch(e) {
+
+							}
 							let updated=false;
 							for (const [key, value] of Object.entries(permissions[parentAccount])) {
 								if(typeof  parentStorage !== 'undefined') {

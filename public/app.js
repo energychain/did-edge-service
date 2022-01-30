@@ -118,7 +118,11 @@ const grantRetrieve = async function() {
 
   const did = {did:await builder.toJWT(payload)};
   $.getJSON("/api/grant/retrieve?address="+window.childIdentity.address+"&owner="+encodeURIComponent('did:ethr:'+window.identity.identifier),function(data) {
-    window.editorChild.set(data);
+    let parentAccount = '';
+    for (const [key, value] of Object.entries(data)) {
+      parentAccount = key;
+    }
+    window.editorChild.set(data[parentAccount]);
   });
 }
 
@@ -147,7 +151,7 @@ const retrieveVP = async function() {
   if(typeof payload !== 'object') {
     payload = { value:payload };
   }
-  const did = {did:await builder.toJWT(payload,$('#retrieveFrom').val())};
+  const did = {did:await builder.toJWT(payload,''+$('#retrieveFrom').val())};
   $.ajax({
     type: "POST",
     url: "/api/profile/update",
