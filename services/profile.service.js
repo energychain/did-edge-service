@@ -57,6 +57,9 @@ module.exports = {
 							for (const [key, value] of Object.entries(did.payload)) {
 							  storage[key] = value;
 								updated = true;
+								if(value.length == 0) {
+									delete storage[key];
+								}
 							}
 							response =  storage;
 							if(updated) {

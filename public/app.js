@@ -217,5 +217,5 @@ $(document).ready(async function() {
   $('#btnGrantRetrieve').click(grantRetrieve);
   $('#btnDelegateChild').click(delegateChild);
   $('#btnRetrieveVP').click(retrieveVP);
-
+  $('#connectMetamask').click(WebClient.connectMetamask);
 })

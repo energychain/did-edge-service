@@ -31411,7 +31411,7 @@ class Identity {
   constructor(config) {
     if((typeof config == 'undefined') || (config == null)) config = {};
 
-    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://integration.corrently.io/";
+    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://rpc.tydids.com/";
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
     if(typeof config.registry == 'undefined') config.registry ="0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB";
@@ -31437,38 +31437,48 @@ class Identity {
       return identity;
     }
 
+    this.getProvider = async function() {
+      if ((typeof window !== 'undefined') && (typeof window.ethereum !== 'undefined')) {
+          const chainId = await window.ethereum.request({ method: 'eth_chainId'});
+          if((chainId !== config.chainId)&&(chainId * 1 !== parseInt(config.chainId, 16) )&&( parseInt(chainId,16) !== config.chainId * 1 )) throw new Error("Web3 Provier - chainID !== "+config.chainId);
+          return new ethers.providers.Web3Provider(window.ethereum)
+      } else {
+          return new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      }
+    }
+
     this.getBalance = async function(address) {
       if((typeof address == 'undefined') || (address == null)) {
         address = parent.config.identity.address;
       }
-      const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      const provider = await parent.getProvider();
       return await ethers.utils.formatUnits(await provider.getBalance(address),'finney');
     }
 
     this.delegate = async function(id,to,duration) {
         if((typeof duration == 'undefined')||(duration==null)) duration = 3600;
-        const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+        const provider = await parent.getProvider();
         const wallet = new ethers.Wallet(config.identity.privateKey,provider);
         const registry = new ethers.Contract( config.registry , config.abi , wallet );
         return await registry.addDelegate(id,"0x766572694b657900000000000000000000000000000000000000000000000000",to,duration);
     }
 
     this.revokeDelegate = async function(id,to) {
-      const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      const provider = await parent.getProvider();
       const wallet = new ethers.Wallet(config.identity.privateKey,provider);
       const registry = new ethers.Contract( config.registry , config.abi , wallet );
       return await registry.revokeDelegate(id,"0x766572694b657900000000000000000000000000000000000000000000000000",to);
     }
 
     this.changeOwner = async function(id,to) {
-      const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      const provider = await parent.getProvider();
       const wallet = new ethers.Wallet(config.identity.privateKey,provider);
       const registry = new ethers.Contract( config.registry , config.abi , wallet );
       return await registry.changeOwner(id,to);
     }
 
     this.resolve = async function(addr) {
-      const provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
+      const provider = await parent.getProvider();
       const wallet = new ethers.Wallet(config.identity.privateKey,provider);
       const ethrDid = new EthrDID({txSigner:wallet,provider:provider,identifier:config.identity.identifier,registry:config.registry});
       return await ethrDid.resolve(addr);
@@ -31479,17 +31489,34 @@ module.exports = Identity;
 
 },{"../EthereumDIDRegistry.abi.json":153,"ethers":178,"ethr-did":182}],155:[function(require,module,exports){
 const EthrDID = require("ethr-did").EthrDID;
+const ethers = require("ethers");
 
 class JWTBuilder {
   constructor(config) {
     if((typeof config == 'undefined') || (config == null)) { config = {}; }
-    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://integration.corrently.io/";
+    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://rpc.tydids.com/";
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
     if(typeof config.identifier == 'undefined') config.identifier = "0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4";
     if(typeof config.registry == 'undefined') config.registry ="0xaC2DDf7488C1C2Dd1f8FFE36e207D8Fb96cF2fFB";
 
-    this.config = config;
+    this.config = config
+    const parent = this;
+
+    this.getEtherDid = async function(identity)  {
+        if ((typeof window !== 'undefined') && (typeof window.ethereum !== 'undefined')) {
+            const chainId = await window.ethereum.request({ method: 'eth_chainId'});
+            if((chainId !== config.chainId)&&(chainId * 1 !== parseInt(config.chainId, 16) )&&( parseInt(chainId,16) !== config.chainId * 1 )) throw new Error("Web3 Provier - chainID !== "+config.chainId);
+            const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            const txSigner = provider.getSigner();
+            const signer = provider.getSigner();
+            config.identifier  = await signer.getAddress();
+            console.log("Signer",config.identifier);
+            return new EthrDID({identifier:identity,alg:'ES256K',address:config.identifier,chainNameOrId:config.chainId,registry:config.registry,provider:provider,txSigner:txSigner,signer:signer});
+        } else {
+            return new EthrDID({identifier:identity,chainNameOrId:config.chainId,registry:config.registry,rpcUrl:config.rpcUrl,privateKey:config.identity.privateKey});
+        }
+    }
 
     this.toJWT = async function(object,identity) {
       if((typeof object !== 'object')||(object == null)) {
@@ -31498,15 +31525,14 @@ class JWTBuilder {
       if((typeof identity == 'undefined')||(identity == null)) {
         identity = config.identity.address;
       }
-      console.log('Working ID',identity);
-      const ethrDid = new EthrDID({identifier:identity,chainNameOrId:config.chainId,registry:config.registry,rpcUrl:config.rpcUrl,privateKey:config.identity.privateKey});
+      const ethrDid = await parent.getEtherDid(identity);
       return await ethrDid.signJWT(object);
     }
   }
 }
 module.exports = JWTBuilder;
 
-},{"ethr-did":182}],156:[function(require,module,exports){
+},{"ethers":178,"ethr-did":182}],156:[function(require,module,exports){
 const Resolver = require('did-resolver').Resolver;
 const getResolver = require('ethr-did-resolver').getResolver;
 const EthrDID = require("ethr-did").EthrDID;
@@ -31515,7 +31541,7 @@ class JWTResolver {
   constructor(config) {
     if((typeof config == 'undefined') || (config == null)) config = {};
 
-    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://integration.corrently.io/";
+    if(typeof config.rpcUrl == 'undefined') config.rpcUrl  = "https://rpc.tydids.com/";
     if(typeof config.name == 'undefined') config.name = "mainnet";
     if(typeof config.chainId == 'undefined') config.chainId = "6226";
     if(typeof config.identifier == 'undefined') config.identifier = "0x0292c844af71ae69ec7cb67b37462ced2fea4277ba8174754013f4311367e78ea4";
@@ -31552,7 +31578,15 @@ const WebClient = {
   JWTBuilder:JWTBuilder,
   JWTResolver:JWTResolver,
   JWTDecode:JWTDecode,
-  Identity:Identity
+  Identity:Identity,
+  connectMetamask:async function() {
+    if ((typeof window !== 'undefined') && (typeof window.ethereum !== 'undefined')) {
+      let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if(accounts.length > 0) {
+        window.location.reload();
+      }
+    }
+  }
 }
 module.exports=WebClient
 
