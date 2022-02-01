@@ -78,7 +78,7 @@ module.exports = {
 							console.log("pA",parentAccount);
 							let parentStorage = {};
 							try {
-								parentStorage = JSON.parse(await db.get(issuer));
+								parentStorage = JSON.parse(await db.get(parentAccount));
 							} catch(e) {
 								console.log('PE(e)',e);
 							}
