@@ -76,7 +76,13 @@ module.exports = {
 					 address:"string"
 			},
 			async handler(ctx) {
-				return await JSON.parse(await db.get(ctx.params.address));
+				let value = "{}";
+				try {
+					value = await db.get(ctx.params.address);
+				} catch(e) {
+
+				}
+				return await JSON.parse(value);
 			}
 		}
 	},

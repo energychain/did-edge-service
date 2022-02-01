@@ -124,6 +124,7 @@ const grantRetrieve = async function() {
     }
     window.editorChild.set(data[parentAccount]);
   });
+
 }
 
 // ******************** UI Methods  - Sub ID Handling / Assignment
