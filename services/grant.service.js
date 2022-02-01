@@ -84,6 +84,25 @@ module.exports = {
 				}
 				return await JSON.parse(value);
 			}
+		},
+		retrieveDelegated: {
+			rest: {
+				method: "GET",
+				path: "/retrieveDelegated"
+			},
+			visibility:'published',
+			params: {
+					 address:"string"
+			},
+			async handler(ctx) {
+				let value = "{}";
+				try {
+					value = await db.get(ctx.params.address);
+				} catch(e) {
+						console.log("rD(e)",e);
+				}
+				return await JSON.parse(value);
+			}
 		}
 	},
 

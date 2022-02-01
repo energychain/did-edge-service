@@ -68,7 +68,8 @@ module.exports = {
 							}
 						} else {
 							console.log("grant.retrieve",owner,issuer);
-							const permissions = await ctx.call("grant.retrieve",{address:owner,owner:issuer});
+							const permissions = await ctx.call("grant.retrieveDelegated",{address:owner,owner:issuer});
+							console.log("Permissions",permissions);
 							let tennentObject = {};
 							let parentAccount = '';
 							for (const [key, value] of Object.entries(permissions)) {
