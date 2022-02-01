@@ -47,6 +47,7 @@ module.exports = {
 						did = await resolver.toDid(ctx.params.did);
 						let issuer = did.signer.blockchainAccountId.substr(0,42);
 						let owner = did.issuer.substr(14,42);
+						console.log("Save Owner",owner);
 						let storage =  {}
 						try {
 							storage = JSON.parse(await db.get(owner));
