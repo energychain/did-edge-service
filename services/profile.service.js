@@ -80,7 +80,7 @@ module.exports = {
 							try {
 								parentStorage = JSON.parse(await db.get(parentAccount));
 							} catch(e) {
-
+								console.log('PE(e)',e);
 							}
 							console.log("pS",parentStorage);
 							let updated=false;
