@@ -67,22 +67,18 @@ module.exports = {
 								await db.put(owner,JSON.stringify(storage));
 							}
 						} else {
-							console.log("grant.retrieve",owner,issuer);
 							const permissions = await ctx.call("grant.retrieveDelegated",{address:owner,owner:issuer});
-							console.log("Permissions",permissions);
 							let tennentObject = {};
 							let parentAccount = '';
 							for (const [key, value] of Object.entries(permissions)) {
 								parentAccount = key;
 							}
-							console.log("pA",parentAccount);
 							let parentStorage = {};
 							try {
 								parentStorage = JSON.parse(await db.get(parentAccount));
 							} catch(e) {
 								console.log('PE(e)',e);
 							}
-							console.log("pS",parentStorage);
 							let updated=false;
 							for (const [key, value] of Object.entries(permissions[parentAccount])) {
 								if(typeof  parentStorage !== 'undefined') {
