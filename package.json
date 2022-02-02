@@ -32,6 +32,7 @@
   "dependencies": {
     "axios": "^0.25.0",
     "did-wallet-web": "^0.5.16",
+    "jsontokens": "^3.0.0",
     "level": "^7.0.1",
     "moleculer": "^0.14.19",
     "moleculer-repl": "^0.7.0",
