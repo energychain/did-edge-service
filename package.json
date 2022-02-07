@@ -32,6 +32,8 @@
   "dependencies": {
     "axios": "^0.25.0",
     "did-wallet-web": "^0.5.16",
+    "gun": "^0.2020.1235",
+    "http": "^0.0.1-security",
     "jsontokens": "^3.0.0",
     "level": "^7.0.1",
     "moleculer": "^0.14.19",
