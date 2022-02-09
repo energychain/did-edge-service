@@ -57,7 +57,7 @@ module.exports = {
 
 	async started() {
 		var server = http.Server();
-		const port = 8899;
+		const port = 8890;
 
 		// Serves up /index.html
 		server.on('request', function (req, res) {
