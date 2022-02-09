@@ -63,7 +63,7 @@ module.exports = {
 		server.on('request', function (req, res) {
 			if(Gun.serve(req, res)){ return }
 			if (req.url === '/' || req.url === '/index.html') {
-				res.redirect('https://tydids.com/?err=fromWebRTC');
+				// res.redirect('https://tydids.com/?err=fromWebRTC');
 			}
 		});
 
