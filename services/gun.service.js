@@ -72,6 +72,21 @@ module.exports = {
 			peers: ['https://webrtc.tydids.com/gun']
 		});
 
+		gun.get("identities").on(async function(data) {
+			let from = '';
+			let value = '';
+			for (const [key, _value] of Object.entries(data)) {
+				if((key !== '_') && (value !== '#')) {
+					from = key;
+					value = _value;
+				}
+			}
+			console.log("- discovered new identity",from);
+			gun.get("identities").get(from).on( function(data) {
+					console.log("I -"+from);
+			});
+		});
+
 
 		server.listen(port, function () {
 			console.log('\nApp listening on port', port);
